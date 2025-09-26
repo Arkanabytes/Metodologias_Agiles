@@ -1,0 +1,1759 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitApp - Tu Gimnasio Digital</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .phone-container {
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 40px;
+            padding: 8px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .status-bar {
+            height: 44px;
+            background: #000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            position: relative;
+            z-index: 1000;
+        }
+
+        .app-container {
+            height: calc(100% - 44px - 80px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page.active {
+            transform: translateX(0);
+        }
+
+        .page.prev {
+            transform: translateX(-100%);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: -300px;
+            top: 44px;
+            width: 280px;
+            height: calc(100% - 44px);
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            transition: left 0.3s ease;
+            z-index: 2000;
+            border-top-right-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1500;
+        }
+
+        .sidebar-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .sidebar-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .sidebar-info h3 {
+            color: white;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-info p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .sidebar-item:hover, .sidebar-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .sidebar-item-icon {
+            font-size: 20px;
+            width: 24px;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        /* Login Page */
+        .login-page {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            justify-content: center;
+            align-items: center;
+            padding: 40px 30px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo h1 {
+            color: white;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .logo p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+        }
+
+        .login-form {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            outline: none;
+        }
+
+        .form-group input::placeholder {
+            color: #666;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .social-login {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .google-btn {
+            background: #fff;
+            color: #333;
+        }
+
+        .facebook-btn {
+            background: #4267B2;
+            color: white;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        /* Header */
+        .header {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-content h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .header-content p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 10px;
+            padding: 10px;
+            color: white;
+            cursor: pointer;
+            font-size: 20px;
+            transition: background 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        /* Home Page Specific */
+        .welcome-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .welcome-card h2 {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .welcome-card p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        /* Aforo del gimnasio */
+        .gym-capacity {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .capacity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .capacity-title {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .capacity-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .capacity-normal {
+            background: rgba(76, 175, 80, 0.8);
+            color: white;
+        }
+
+        .capacity-high {
+            background: rgba(255, 152, 0, 0.8);
+            color: white;
+        }
+
+        .capacity-full {
+            background: rgba(244, 67, 54, 0.8);
+            color: white;
+        }
+
+        .capacity-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .capacity-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.3s ease;
+        }
+
+        .capacity-info {
+            display: flex;
+            justify-content: space-between;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-number {
+            color: #ffeb3b;
+            font-size: 28px;
+            font-weight: 700;
+            display: block;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            cursor: pointer;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .action-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .action-text {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Profile Page */
+        .profile-header {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+        }
+
+        .profile-name {
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .profile-email {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+        }
+
+        .profile-options {
+            padding: 0 20px;
+        }
+
+        .profile-option {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            color: white;
+            cursor: pointer;
+            text-align: left;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .profile-option:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .profile-option-icon {
+            font-size: 20px;
+            width: 24px;
+        }
+
+        /* Reservations Page */
+        .class-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .class-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .class-name {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .class-spots {
+            background: rgba(76, 175, 80, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .class-time {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .reserve-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .reserve-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .reserved {
+            background: #4caf50;
+        }
+
+        /* Progress Page */
+        .progress-chart {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .chart-title {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #4caf50, #8bc34a);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 8px 0;
+        }
+
+        /* Chat Page */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+
+        .message.trainer {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .message.user {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-input {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            outline: none;
+        }
+
+        /* AI Trainer Page */
+        .ai-container {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .ai-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+        }
+
+        .ai-name {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .ai-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .ai-options {
+            display: grid;
+            gap: 15px;
+        }
+
+        .ai-option {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .ai-option:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .ai-option h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .ai-option p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Diet Page */
+        .diet-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 5px;
+            backdrop-filter: blur(10px);
+        }
+
+        .diet-tab {
+            flex: 1;
+            padding: 12px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .diet-tab.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .diet-content {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .meal-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .meal-title {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .meal-item {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Bottom Navigation (DENTRO DEL MARCO) */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 100;
+            border-bottom-left-radius: 32px;
+            border-bottom-right-radius: 32px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            transition: all 0.3s;
+            padding: 8px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* Home button animation */
+        .home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 134px;
+            height: 5px;
+            background: #fff;
+            border-radius: 3px;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="phone-screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>FitApp</span>
+                <span>🔋 100%</span>
+            </div>
+            
+            <div class="app-container">
+                <!-- Sidebar -->
+                <div class="sidebar" id="sidebar">
+                    <div class="sidebar-header">
+                        <div class="sidebar-profile">
+                            <div class="sidebar-avatar">👨‍💼</div>
+                            <div class="sidebar-info">
+                                <h3>Juan Pérez</h3>
+                                <p>Miembro Premium</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sidebar-nav">
+                        <button class="sidebar-item active" onclick="sidebarNavigate('home')">
+                            <span class="sidebar-item-icon">🏠</span>
+                            <span>Inicio</span>
+                        </button>
+                        <button class="sidebar-item" onclick="sidebarNavigate('profile')">
+                            <span class="sidebar-item-icon">👤</span>
+                            <span>Mi Perfil</span>
+                        </button>
+                        <button class="sidebar-item" onclick="sidebarNavigate('reservations')">
+                            <span class="sidebar-item-icon">📅</span>
+                            <span>Reservas</span>
+                        </button>
+                        <button class="sidebar-item" onclick="sidebarNavigate('progress')">
+                            <span class="sidebar-item-icon">📊</span>
+                            <span>Progreso</span>
+                        </button>
+                        <button class="sidebar-item" onclick="sidebarNavigate('chat')">
+                            <span class="sidebar-item-icon">💬</span>
+                            <span>Chat Entrenador</span>
+                        </button>
+                        <button class="sidebar-item" onclick="sidebarNavigate('ai-trainer')">
+                            <span class="sidebar-item-icon">🤖</span>
+                            <span>Asistente IA</span>
+                        </button>
+                        <button class="sidebar-item" onclick="sidebarNavigate('diet')">
+                            <span class="sidebar-item-icon">🥗</span>
+                            <span>Plan Nutricional</span>
+                        </button>
+                        <button class="sidebar-item" onclick="logout()">
+                            <span class="sidebar-item-icon">🚪</span>
+                            <span>Cerrar Sesión</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sidebar Overlay -->
+                <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+                <!-- Login Page -->
+                <div class="page active" id="login">
+                    <div class="login-page">
+                        <div class="login-container">
+                            <div class="logo">
+                                <h1>💪 FitApp</h1>
+                                <p>Tu gimnasio digital</p>
+                            </div>
+                            
+                            <div class="login-form">
+                                <div class="form-group">
+                                    <input type="email" placeholder="Email" id="email">
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" placeholder="Contraseña" id="password">
+                                </div>
+                                <button class="login-btn" onclick="login()">Iniciar Sesión</button>
+                                
+                                <div class="social-login">
+                                    <button class="social-btn google-btn" onclick="login()">Google</button>
+                                    <button class="social-btn facebook-btn" onclick="login()">Facebook</button>
+                                </div>
+                                
+                                <p style="text-align: center; color: rgba(255, 255, 255, 0.8); font-size: 14px;">
+                                    ¿No tienes cuenta? <a href="#" style="color: #ffeb3b;">Regístrate</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Home Page -->
+                <div class="page" id="home">
+                    <div class="header">
+                        <div class="header-left">
+                            <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+                            <div class="header-content">
+                                <h1>¡Hola, Juan!</h1>
+                                <p>¿Listo para entrenar hoy?</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="content">
+                        <div class="welcome-card fade-in">
+                            <h2>🎯 Tu objetivo</h2>
+                            <p>Ganar masa muscular • Semana 3 de 12</p>
+                        </div>
+
+                        <!-- Aforo del Gimnasio -->
+                        <div class="gym-capacity fade-in">
+                            <div class="capacity-header">
+                                <h3 class="capacity-title">🏋️‍♂️ Aforo del Gimnasio</h3>
+                                <span class="capacity-status capacity-high" id="capacityStatus">Ocupado</span>
+                            </div>
+                            <div class="capacity-bar">
+                                <div class="capacity-fill" id="capacityFill" style="width: 72%; background: linear-gradient(45deg, #ff9800, #f57c00);"></div>
+                            </div>
+                            <div class="capacity-info">
+                                <span id="currentCapacity">72 personas</span>
+                                <span>Máximo: 100</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stats-grid">
+                            <div class="stat-card fade-in">
+                                <span class="stat-number">23</span>
+                                <div class="stat-label">Entrenamientos</div>
+                            </div>
+                            <div class="stat-card fade-in">
+                                <span class="stat-number">8.5kg</span>
+                                <div class="stat-label">Progreso</div>
+                            </div>
+                        </div>
+                        
+                        <div class="quick-actions">
+                            <button class="action-btn fade-in" onclick="navigateTo('reservations')">
+                                <span class="action-icon">📅</span>
+                                <div class="action-text">Reservar Clase</div>
+                            </button>
+                            <button class="action-btn fade-in" onclick="navigateTo('ai-trainer')">
+                                <span class="action-icon">🤖</span>
+                                <div class="action-text">Asistente IA</div>
+                            </button>
+                            <button class="action-btn fade-in" onclick="navigateTo('progress')">
+                                <span class="action-icon">📊</span>
+                                <div class="action-text">Mi Progreso</div>
+                            </button>
+                            <button class="action-btn fade-in" onclick="navigateTo('diet')">
+                                <span class="action-icon">🥗</span>
+                                <div class="action-text">Plan Nutricional</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Page -->
+                <div class="page" id="profile">
+                    <div class="header">
+                        <div class="header-left">
+                            <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+                            <div class="header-content">
+                                <h1>Mi Perfil</h1>
+                                <p>Información personal</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="content">
+                        <div class="profile-header">
+                            <div class="profile-avatar">👨‍💼</div>
+                            <h2 class="profile-name">Juan Pérez</h2>
+                            <p class="profile-email">juan.perez@email.com</p>
+                        </div>
+                        
+                        <div class="profile-options">
+                            <button class="profile-option">
+                                <span class="profile-option-icon">📝</span>
+                                <span>Editar Información Personal</span>
+                            </button>
+                            <button class="profile-option">
+                                <span class="profile-option-icon">💳</span>
+                                <span>Métodos de Pago</span>
+                            </button>
+                            <button class="profile-option">
+                                <span class="profile-option-icon">🎯</span>
+                                <span>Mis Objetivos</span>
+                            </button>
+                            <button class="profile-option">
+                                <span class="profile-option-icon">⚙️</span>
+                                <span>Configuración</span>
+                            </button>
+                            <button class="profile-option">
+                                <span class="profile-option-icon">📱</span>
+                                <span>Conectar Wearables</span>
+                            </button>
+                            <button class="profile-option">
+                                <span class="profile-option-icon">🔔</span>
+                                <span>Notificaciones</span>
+                            </button>
+                            <button class="profile-option">
+                                <span class="profile-option-icon">🛡️</span>
+                                <span>Privacidad y Seguridad</span>
+                            </button>
+                            <button class="profile-option">
+                                <span class="profile-option-icon">❓</span>
+                                <span>Ayuda y Soporte</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reservations Page -->
+                <div class="page" id="reservations">
+                    <div class="header">
+                        <div class="header-left">
+                            <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+                            <div class="header-content">
+                                <h1>Reservar Clases</h1>
+                                <p>Clases disponibles hoy</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="content">
+                        <div class="class-card fade-in">
+                            <div class="class-header">
+                                <h3 class="class-name">💪 CrossFit</h3>
+                                <span class="class-spots">5 espacios</span>
+                            </div>
+                            <div class="class-time">⏰ 07:00 - 08:00 • Instructor: Carlos</div>
+                            <button class="reserve-btn" onclick="toggleReservation(this)">Reservar</button>
+                        </div>
+                        
+                        <div class="class-card fade-in">
+                            <div class="class-header">
+                                <h3 class="class-name">🧘‍♀️ Yoga</h3>
+                                <span class="class-spots">3 espacios</span>
+                            </div>
+                            <div class="class-time">⏰ 09:00 - 10:00 • Instructor: Ana</div>
+                            <button class="reserve-btn" onclick="toggleReservation(this)">Reservar</button>
+                        </div>
+                        
+                        <div class="class-card fade-in">
+                            <div class="class-header">
+                                <h3 class="class-name">🚴‍♂️ Spinning</h3>
+                                <span class="class-spots">2 espacios</span>
+                            </div>
+                            <div class="class-time">⏰ 18:00 - 19:00 • Instructor: Luis</div>
+                            <button class="reserve-btn" onclick="toggleReservation(this)">Reservar</button>
+                        </div>
+                        
+                        <div class="class-card fade-in">
+                            <div class="class-header">
+                                <h3 class="class-name">💃 Zumba</h3>
+                                <span class="class-spots" style="background: rgba(255, 152, 0, 0.8);">Lista espera</span>
+                            </div>
+                            <div class="class-time">⏰ 19:30 - 20:30 • Instructor: María</div>
+                            <button class="reserve-btn" style="background: #ff9800;" onclick="addToWaitlist(this)">Lista de Espera</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Page -->
+                <div class="page" id="progress">
+                    <div class="header">
+                        <div class="header-left">
+                            <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+                            <div class="header-content">
+                                <h1>Mi Progreso</h1>
+                                <p>Seguimiento de tu evolución</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="content">
+                        <div class="progress-chart fade-in">
+                            <h3 class="chart-title">📈 Peso Corporal</h3>
+                            <div class="metric-row">
+                                <span>Peso actual:</span>
+                                <span>75.2 kg</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 70%"></div>
+                            </div>
+                            <div class="metric-row">
+                                <span>Objetivo:</span>
+                                <span>78 kg</span>
+                            </div>
+                        </div>
+                        
+                        <div class="progress-chart fade-in">
+                            <h3 class="chart-title">💪 Fuerza</h3>
+                            <div class="metric-row">
+                                <span>Press Banca:</span>
+                                <span>85 kg</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 85%"></div>
+                            </div>
+                            <div class="metric-row">
+                                <span>Sentadilla:</span>
+                                <span>120 kg</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 75%"></div>
+                            </div>
+                            <div class="metric-row">
+                                <span>Peso Muerto:</span>
+                                <span>140 kg</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 80%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="progress-chart fade-in">
+                            <h3 class="chart-title">🏃‍♂️ Cardio</h3>
+                            <div class="metric-row">
+                                <span>Entrenamientos esta semana:</span>
+                                <span>4/5</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 80%"></div>
+                            </div>
+                            <div class="metric-row">
+                                <span>Calorías quemadas hoy:</span>
+                                <span>487 kcal</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Page -->
+                <div class="page" id="chat">
+                    <div class="header">
+                        <div class="header-left">
+                            <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+                            <div class="header-content">
+                                <h1>Chat Entrenador</h1>
+                                <p>Carlos Rodríguez - Online</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-container">
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="message trainer">
+                                ¡Hola Juan! ¿Cómo te sientes después del entrenamiento de ayer?
+                            </div>
+                            <div class="message user">
+                                ¡Hola Carlos! Me siento bien, aunque tengo un poco de agujetas en las piernas 😅
+                            </div>
+                            <div class="message trainer">
+                                Perfecto, eso significa que el entrenamiento fue efectivo. Para mañana te recomiendo hacer cardio ligero y estiramientos.
+                            </div>
+                            <div class="message user">
+                                ¿Qué opinas si cambio la rutina de piernas por una de brazos?
+                            </div>
+                            <div class="message trainer">
+                                Es mejor seguir el plan establecido. El descanso muscular es importante para el crecimiento. ¿Te parece si hacemos brazos el viernes?
+                            </div>
+                        </div>
+                        
+                        <div class="chat-input-container">
+                            <input type="text" class="chat-input" placeholder="Escribe tu mensaje..." id="chatInput" onkeypress="sendMessage(event)">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Trainer Page -->
+                <div class="page" id="ai-trainer">
+                    <div class="header">
+                        <div class="header-left">
+                            <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+                            <div class="header-content">
+                                <h1>Asistente IA</h1>
+                                <p>Tu entrenador virtual personal</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="content">
+                        <div class="ai-container">
+                            <div class="ai-avatar">🤖</div>
+                            <h2 class="ai-name">FitBot</h2>
+                            <p class="ai-description">Soy tu asistente personal de fitness. Puedo ayudarte con rutinas, consejos nutricionales y motivación.</p>
+                            
+                            <div class="ai-options">
+                                <button class="ai-option" onclick="askAI('rutina')">
+                                    <h3>💪 Crear Rutina</h3>
+                                    <p>Genera una rutina personalizada según tus objetivos</p>
+                                </button>
+                                
+                                <button class="ai-option" onclick="askAI('consejo')">
+                                    <h3>💡 Consejos de Entrenamiento</h3>
+                                    <p>Obtén tips para mejorar tu técnica y rendimiento</p>
+                                </button>
+                                
+                                <button class="ai-option" onclick="askAI('motivacion')">
+                                    <h3>🔥 Motivación Diaria</h3>
+                                    <p>Recibe mensajes inspiradores para no rendirte</p>
+                                </button>
+                                
+                                <button class="ai-option" onclick="askAI('nutricion')">
+                                    <h3>🥗 Consejos Nutricionales</h3>
+                                    <p>Recomendaciones de alimentación para tu objetivo</p>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Diet Page -->
+                <div class="page" id="diet">
+                    <div class="header">
+                        <div class="header-left">
+                            <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+                            <div class="header-content">
+                                <h1>Plan Nutricional</h1>
+                                <p>Alimentación para tus objetivos</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="content">
+                        <div class="diet-tabs">
+                            <button class="diet-tab active" onclick="switchDietTab('definition', this)">Definición</button>
+                            <button class="diet-tab" onclick="switchDietTab('bulk', this)">Volumen</button>
+                            <button class="diet-tab" onclick="switchDietTab('weight-loss', this)">Pérdida</button>
+                        </div>
+                        
+                        <div class="diet-content" id="dietContent">
+                            <div class="meal-card">
+                                <h3 class="meal-title">🌅 Desayuno (520 kcal)</h3>
+                                <div class="meal-item">
+                                    <span>Avena con frutas</span>
+                                    <span>200 kcal</span>
+                                </div>
+                                <div class="meal-item">
+                                    <span>2 huevos cocidos</span>
+                                    <span>140 kcal</span>
+                                </div>
+                                <div class="meal-item">
+                                    <span>Yogur griego</span>
+                                    <span>180 kcal</span>
+                                </div>
+                            </div>
+                            
+                            <div class="meal-card">
+                                <h3 class="meal-title">🥗 Almuerzo (680 kcal)</h3>
+                                <div class="meal-item">
+                                    <span>Pechuga de pollo (150g)</span>
+                                    <span>250 kcal</span>
+                                </div>
+                                <div class="meal-item">
+                                    <span>Arroz integral (100g)</span>
+                                    <span>350 kcal</span>
+                                </div>
+                                <div class="meal-item">
+                                    <span>Ensalada mixta</span>
+                                    <span>80 kcal</span>
+                                </div>
+                            </div>
+                            
+                            <div class="meal-card">
+                                <h3 class="meal-title">🥜 Merienda (250 kcal)</h3>
+                                <div class="meal-item">
+                                    <span>Batido de proteína</span>
+                                    <span>150 kcal</span>
+                                </div>
+                                <div class="meal-item">
+                                    <span>Almendras (30g)</span>
+                                    <span>100 kcal</span>
+                                </div>
+                            </div>
+                            
+                            <div class="meal-card">
+                                <h3 class="meal-title">🌙 Cena (450 kcal)</h3>
+                                <div class="meal-item">
+                                    <span>Salmón a la plancha</span>
+                                    <span>300 kcal</span>
+                                </div>
+                                <div class="meal-item">
+                                    <span>Verduras al vapor</span>
+                                    <span>150 kcal</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Navigation (DENTRO DEL MARCO DEL TELÉFONO) -->
+            <div class="bottom-nav">
+                <div class="nav-item active" onclick="navigateTo('home')">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Inicio</span>
+                </div>
+                <div class="nav-item" onclick="navigateTo('reservations')">
+                    <span class="nav-icon">📅</span>
+                    <span class="nav-label">Reservas</span>
+                </div>
+                <div class="nav-item" onclick="navigateTo('progress')">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-label">Progreso</span>
+                </div>
+                <div class="nav-item" onclick="navigateTo('chat')">
+                    <span class="nav-icon">💬</span>
+                    <span class="nav-label">Chat</span>
+                </div>
+                <div class="nav-item" onclick="navigateTo('profile')">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-label">Perfil</span>
+                </div>
+            </div>
+            
+            <!-- Indicador home del iPhone -->
+            <div class="home-indicator"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 'login';
+        let isLoggedIn = false;
+        let sidebarOpen = false;
+
+        function login() {
+            isLoggedIn = true;
+            navigateTo('home');
+            // Simular actualización del aforo cada 10 segundos
+            setInterval(updateGymCapacity, 10000);
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            closeSidebar();
+            navigateTo('login');
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (sidebarOpen) {
+                closeSidebar();
+            } else {
+                sidebar.classList.add('open');
+                overlay.classList.add('show');
+                sidebarOpen = true;
+            }
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebar.classList.remove('open');
+            overlay.classList.remove('show');
+            sidebarOpen = false;
+        }
+
+        function sidebarNavigate(pageId) {
+            navigateTo(pageId);
+            closeSidebar();
+            
+            // Actualizar item activo en sidebar
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function navigateTo(pageId) {
+            if (!isLoggedIn && pageId !== 'login') {
+                return;
+            }
+
+            const currentPageEl = document.getElementById(currentPage);
+            const targetPageEl = document.getElementById(pageId);
+            
+            if (!targetPageEl) return;
+            
+            // Añadir clase prev a la página actual
+            currentPageEl.classList.add('prev');
+            currentPageEl.classList.remove('active');
+            
+            // Mostrar nueva página
+            targetPageEl.classList.add('active');
+            targetPageEl.classList.remove('prev');
+            
+            // Actualizar navegación inferior
+            updateBottomNav(pageId);
+            
+            currentPage = pageId;
+            
+            // Limpiar clases después de la transición
+            setTimeout(() => {
+                currentPageEl.classList.remove('prev');
+            }, 300);
+        }
+
+        function updateBottomNav(activePageId) {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Mapeo de páginas a items de navegación
+            const pageToNavIndex = {
+                'home': 0,
+                'reservations': 1,
+                'progress': 2,
+                'chat': 3,
+                'profile': 4
+            };
+            
+            const activeIndex = pageToNavIndex[activePageId];
+            if (activeIndex !== undefined && navItems[activeIndex]) {
+                navItems[activeIndex].classList.add('active');
+            }
+        }
+
+        function updateGymCapacity() {
+            const capacities = [
+                { percent: 45, people: 45, status: 'Normal', color: 'linear-gradient(45deg, #4caf50, #8bc34a)', statusClass: 'capacity-normal' },
+                { percent: 72, people: 72, status: 'Ocupado', color: 'linear-gradient(45deg, #ff9800, #f57c00)', statusClass: 'capacity-high' },
+                { percent: 89, people: 89, status: 'Muy Ocupado', color: 'linear-gradient(45deg, #f44336, #d32f2f)', statusClass: 'capacity-full' },
+                { percent: 31, people: 31, status: 'Tranquilo', color: 'linear-gradient(45deg, #4caf50, #8bc34a)', statusClass: 'capacity-normal' }
+            ];
+            
+            const randomCapacity = capacities[Math.floor(Math.random() * capacities.length)];
+            
+            document.getElementById('capacityFill').style.width = randomCapacity.percent + '%';
+            document.getElementById('capacityFill').style.background = randomCapacity.color;
+            document.getElementById('currentCapacity').textContent = randomCapacity.people + ' personas';
+            document.getElementById('capacityStatus').textContent = randomCapacity.status;
+            document.getElementById('capacityStatus').className = 'capacity-status ' + randomCapacity.statusClass;
+        }
+
+        function toggleReservation(button) {
+            if (button.textContent === 'Reservar') {
+                button.textContent = '✓ Reservado';
+                button.classList.add('reserved');
+                button.style.background = '#4caf50';
+                
+                // Simular notificación
+                setTimeout(() => {
+                    alert('¡Reserva confirmada! Te enviaremos un recordatorio 30 minutos antes.');
+                }, 500);
+            } else {
+                button.textContent = 'Reservar';
+                button.classList.remove('reserved');
+                button.style.background = 'linear-gradient(45deg, #ff6b6b, #ee5a24)';
+            }
+        }
+
+        function addToWaitlist(button) {
+            button.textContent = '✓ En Lista';
+            button.style.background = '#ff9800';
+            setTimeout(() => {
+                alert('Agregado a la lista de espera. Te notificaremos si hay disponibilidad.');
+            }, 500);
+        }
+
+        function sendMessage(event) {
+            if (event.key === 'Enter') {
+                const input = document.getElementById('chatInput');
+                const message = input.value.trim();
+                
+                if (message) {
+                    const chatMessages = document.getElementById('chatMessages');
+                    
+                    // Agregar mensaje del usuario
+                    const userMessage = document.createElement('div');
+                    userMessage.className = 'message user';
+                    userMessage.textContent = message;
+                    chatMessages.appendChild(userMessage);
+                    
+                    input.value = '';
+                    
+                    // Simular respuesta del entrenador
+                    setTimeout(() => {
+                        const trainerMessage = document.createElement('div');
+                        trainerMessage.className = 'message trainer';
+                        trainerMessage.textContent = getTrainerResponse(message);
+                        chatMessages.appendChild(trainerMessage);
+                        
+                        // Scroll al final
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }, 1000);
+                    
+                    // Scroll al final
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            }
+        }
+
+        function getTrainerResponse(userMessage) {
+            const responses = [
+                "Excelente pregunta. Te recomiendo mantener la constancia en tu rutina.",
+                "Recuerda que el descanso es tan importante como el entrenamiento.",
+                "¡Muy bien! Sigue así y pronto verás resultados increíbles.",
+                "Es normal sentir eso al principio. Tu cuerpo se está adaptando.",
+                "Te sugiero ajustar tu alimentación para optimizar los resultados."
+            ];
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        function askAI(type) {
+            const responses = {
+                'rutina': '🤖 FitBot: Basándome en tu objetivo de ganar masa muscular, te recomiendo una rutina de 4 días: Lunes-Pecho/Tríceps, Martes-Espalda/Bíceps, Jueves-Piernas, Viernes-Hombros. ¿Te gustaría que detalle los ejercicios?',
+                'consejo': '🤖 FitBot: Recuerda mantener la técnica correcta antes que el peso. Es mejor hacer 8 repeticiones perfectas que 12 con mala forma. ¡La consistencia es clave! 💪',
+                'motivacion': '🤖 FitBot: ¡Cada día que entrenas estás 1% mejor que ayer! 🔥 Tus músculos crecen mientras descansas, así que no olvides dormir bien. ¡Tú puedes lograr todo lo que te propongas!',
+                'nutricion': '🤖 FitBot: Para ganar masa muscular necesitas un superávit calórico de 300-500 kcal. Consume 2g de proteína por kg de peso corporal. ¿Quieres que ajuste tu plan nutricional? 🥗'
+            };
+            
+            setTimeout(() => {
+                alert(responses[type]);
+            }, 500);
+        }
+
+        function switchDietTab(dietType, button) {
+            // Actualizar tabs activos
+            document.querySelectorAll('.diet-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            button.classList.add('active');
+            
+            // Cambiar contenido según el tipo de dieta
+            const content = document.getElementById('dietContent');
+            
+            const dietPlans = {
+                'definition': {
+                    title: 'Plan de Definición',
+                    meals: [
+                        {
+                            title: '🌅 Desayuno (420 kcal)',
+                            items: [
+                                ['Claras de huevo (6)', '120 kcal'],
+                                ['Avena (50g)', '190 kcal'],
+                                ['Fresas (100g)', '110 kcal']
+                            ]
+                        },
+                        {
+                            title: '🥗 Almuerzo (550 kcal)',
+                            items: [
+                                ['Pechuga de pollo (120g)', '200 kcal'],
+                                ['Brócoli (200g)', '70 kcal'],
+                                ['Arroz integral (80g)', '280 kcal']
+                            ]
+                        }
+                    ]
+                },
+                'bulk': {
+                    title: 'Plan de Volumen',
+                    meals: [
+                        {
+                            title: '🌅 Desayuno (780 kcal)',
+                            items: [
+                                ['Avena con leche (100g)', '380 kcal'],
+                                ['Plátano mediano', '120 kcal'],
+                                ['Nueces (40g)', '280 kcal']
+                            ]
+                        },
+                        {
+                            title: '🥗 Almuerzo (920 kcal)',
+                            items: [
+                                ['Carne magra (200g)', '400 kcal'],
+                                ['Pasta integral (150g)', '420 kcal'],
+                                ['Aceite de oliva (15ml)', '100 kcal']
+                            ]
+                        }
+                    ]
+                },
+                'weight-loss': {
+                    title: 'Plan de Pérdida de Peso',
+                    meals: [
+                        {
+                            title: '🌅 Desayuno (320 kcal)',
+                            items: [
+                                ['Yogur griego 0%', '150 kcal'],
+                                ['Arándanos (80g)', '70 kcal'],
+                                ['Granola casera (30g)', '100 kcal']
+                            ]
+                        },
+                        {
+                            title: '🥗 Almuerzo (450 kcal)',
+                            items: [
+                                ['Ensalada de pollo (150g)', '250 kcal'],
+                                ['Verduras mixtas', '100 kcal'],
+                                ['Vinagreta light', '100 kcal']
+                            ]
+                        }
+                    ]
+                }
+            };
+            
+            const plan = dietPlans[dietType];
+            let html = '';
+            
+            plan.meals.forEach(meal => {
+                html += `
+                    <div class="meal-card">
+                        <h3 class="meal-title">${meal.title}</h3>
+                        ${meal.items.map(item => `
+                            <div class="meal-item">
+                                <span>${item[0]}</span>
+                                <span>${item[1]}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            });
+            
+            content.innerHTML = html;
+        }
+
+        // Inicializar la app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Aplicar animaciones de entrada
+            setTimeout(() => {
+                document.querySelectorAll('.fade-in').forEach((el, index) => {
+                    setTimeout(() => {
+                        el.style.opacity = '1';
+                        el.style.transform = 'translateY(0)';
+                    }, index * 100);
+                });
+            }, 100);
+            
+            // Cerrar sidebar al hacer clic fuera
+            document.addEventListener('click', function(event) {
+                const sidebar = document.getElementById('sidebar');
+                const menuBtn = document.querySelector('.menu-btn');
+                
+                if (sidebarOpen && !sidebar.contains(event.target) && event.target !== menuBtn) {
+                    closeSidebar();
+                }
+            });
+        });
+    </script>
