@@ -1,4 +1,6 @@
+# 🏋️‍♂️ Diagrama de Flujo - App de Gimnasio
 
+```mermaid
 flowchart TD
     A[🚀 Inicio de la App] --> B{¿Usuario autenticado?}
     
@@ -94,7 +96,7 @@ flowchart TD
     %% Cerrar sesión
     U --> U1[🔓 Logout]
     U1 --> A
-    
+
     %% Estilos
     classDef loginClass fill:#667eea,stroke:#333,stroke-width:2px,color:#fff
     classDef mainClass fill:#4caf50,stroke:#333,stroke-width:2px,color:#fff
@@ -102,18 +104,19 @@ flowchart TD
     classDef aiClass fill:#9c27b0,stroke:#333,stroke-width:2px,color:#fff
     classDef errorClass fill:#f44336,stroke:#333,stroke-width:2px,color:#fff
     classDef successClass fill:#2196f3,stroke:#333,stroke-width:2px,color:#fff
-    
+
+    %% Aplicación de clases
     class A,C,D,E loginClass
     class I,V,W,X,Y,Z mainClass
     class O,P,Q,R,T featureClass
+    class P1,P2,P3,P4,P5,P6 featureClass
+    class Q1,Q2,Q3,Q4 featureClass
+    class R1,R2,R3,R4 featureClass
+    class T1,T2,T3,T4,T5 featureClass
     class S,S1,S2,S3,S4,S5,S6 aiClass
     class G,U1 errorClass
     class H,P3,P5 successClass
-
-
-
-
-
+```
 
 
 
