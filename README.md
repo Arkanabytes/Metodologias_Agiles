@@ -119,6 +119,9 @@ flowchart TD
 ```
 
 
+# 🏋️‍♂️ Diagrama de Flujo - App de Gimnasio
+
+
 ```mermaid
 graph TB
     Start["🚀 Iniciar FitPro"] --> Login["🔐 Pantalla Login"]
