@@ -1,121 +1,218 @@
-# 🏋️‍♂️ Diagrama de Flujo - App de Gimnasio
+# Metodologias_Agiles
+Proyecto que ayuda a ver como funciona la metodologia Scrum, con un proyecto simulador.
+
+
+# 🏋️‍♂️ Diagrama de Flujo Completo - App de Gimnasio
 
 ```mermaid
-flowchart TD
-    A[🚀 Inicio de la App] --> B{¿Usuario autenticado?}
+graph TB
+    Start["🚀 FitPro v5<br/>Inicio Aplicación"] --> Splash["⏱️ Splash Screen<br/>Animación Carga"]
+    Splash --> CheckAuth{Usuario<br/>Autenticado?}
     
-    B -->|No| C[📱 Pantalla de Login]
-    C --> D[📧 Ingreso Email/Password]
-    C --> E[🌐 Login Social Google/Facebook]
-    D --> F{¿Credenciales válidas?}
-    E --> F
-    F -->|No| G[❌ Error de autenticación]
-    G --> C
-    F -->|Sí| H[✅ Login exitoso]
+    CheckAuth -->|No| Login["🔐 Pantalla Login<br/>Email + Password"]
+    CheckAuth -->|Sí| Dashboard
     
-    B -->|Sí| I[🏠 Pantalla Principal]
-    H --> I
+    Login --> SocialLogin["🌐 Login Social"]
+    SocialLogin -->|Google| ValidarGoogle["✓ Validar Google"]
+    SocialLogin -->|Facebook| ValidarFB["✓ Validar Facebook"]
+    Login -->|Email/Pass| ValidarEmail["✓ Validar Email"]
     
-    I --> J[📊 Mostrar aforo gimnasio]
-    I --> K[📈 Estadísticas usuario]
-    I --> L[🎯 Objetivo actual]
+    ValidarGoogle --> AuthSuccess{Auth<br/>Exitosa?}
+    ValidarFB --> AuthSuccess
+    ValidarEmail --> AuthSuccess
     
-    I --> M{Navegación}
+    AuthSuccess -->|Error| MostrarError["❌ Mostrar Error"]
+    MostrarError --> Login
+    AuthSuccess -->|Éxito| Dashboard
     
-    M -->|Hamburguesa ☰| N[📋 Menu Lateral]
-    N --> O[👤 Mi Perfil]
-    N --> P[📅 Reservas]
-    N --> Q[📊 Mi Progreso]
-    N --> R[💬 Chat Entrenador]
-    N --> S[🤖 Asistente IA]
-    N --> T[🥗 Plan Nutricional]
-    N --> U[🚪 Cerrar Sesión]
+    Dashboard["🏠 Dashboard Central<br/>Navegación Principal"]
     
-    M -->|Botón Inferior| V[🏠 Inicio]
-    M -->|Botón Inferior| W[📅 Reservas]
-    M -->|Botón Inferior| X[📊 Progreso]
-    M -->|Botón Inferior| Y[💬 Chat]
-    M -->|Botón Inferior| Z[👤 Perfil]
+    Dashboard --> FitBotModule["🤖 MÓDULO FITBOT IA<br/>Asistente Inteligente"]
+    Dashboard --> ProgressModule["📊 MÓDULO MI PROGRESO<br/>Métricas y Logros"]
+    Dashboard --> BookingModule["📅 MÓDULO RESERVAS<br/>Clases y Máquinas"]
+    Dashboard --> TrainerChatModule["👨‍💼 MÓDULO CHAT<br/>Entrenador Personal"]
+    Dashboard --> NutritionModule["🥗 MÓDULO NUTRICIÓN<br/>Planes y Registro"]
+    Dashboard --> ProfileModule["👤 MÓDULO PERFIL<br/>Usuario y Config"]
     
-    %% Página de Perfil
-    O --> O1[🖼️ Avatar usuario]
-    O --> O2[📝 Editar información]
-    O --> O3[💳 Métodos de pago]
-    O --> O4[🎯 Mis objetivos]
-    O --> O5[⚙️ Configuración]
-    O --> O6[📱 Conectar wearables]
+    %% FITBOT IA
+    FitBotModule --> FitBotChat["💬 Chat IA Interactivo"]
+    FitBotChat --> BotonesRapidos["🎯 Botones Acceso Rápido"]
+    BotonesRapidos --> OpcionCardio["🏃‍♂️ Cardio"]
+    BotonesRapidos --> OpcionFuerza["💪 Fuerza"]
+    BotonesRapidos --> OpcionFlex["🧘‍♂️ Flexibilidad"]
+    BotonesRapidos --> OpcionHIIT["⚡ HIIT"]
+    BotonesRapidos --> OpcionMenu["📋 Menú Completo"]
     
-    %% Página de Reservas
-    P --> P1[📋 Lista clases disponibles]
-    P1 --> P2{¿Hay espacios?}
-    P2 -->|Sí| P3[✅ Reservar clase]
-    P2 -->|No| P4[⏳ Lista de espera]
-    P3 --> P5[🔔 Notificación confirmación]
-    P4 --> P6[🔔 Notificación lista espera]
+    OpcionCardio --> GenerarRutina["🎲 IA Genera Rutina"]
+    OpcionFuerza --> GenerarRutina
+    OpcionFlex --> GenerarRutina
+    OpcionHIIT --> GenerarRutina
+    OpcionMenu --> MostrarOpciones["📜 Todas las Opciones"]
     
-    %% Página de Progreso
-    Q --> Q1[📈 Peso corporal]
-    Q --> Q2[💪 Métricas de fuerza]
-    Q --> Q3[🏃‍♂️ Cardio y calorías]
-    Q --> Q4[📊 Barras de progreso]
+    GenerarRutina --> MostrarRutina["📝 Mostrar Rutina Detallada<br/>Calentamiento + Ejercicios + Enfriamiento"]
+    MostrarRutina --> IniciarRutina{Usuario<br/>Inicia?}
+    IniciarRutina -->|Sí| EjecutarRutina["▶️ Ejecutar Rutina<br/>Cronómetro + Guía"]
+    IniciarRutina -->|No| Dashboard
+    EjecutarRutina --> GuardarProgreso["💾 Guardar en Historial"]
+    GuardarProgreso --> Dashboard
     
-    %% Chat con Entrenador
-    R --> R1[💬 Historial mensajes]
-    R1 --> R2[✍️ Escribir mensaje]
-    R2 --> R3[📤 Enviar mensaje]
-    R3 --> R4[🤖 Respuesta automática entrenador]
-    R4 --> R1
+    FitBotChat --> InputTexto["⌨️ Input Manual Usuario"]
+    InputTexto --> AnalizarPregunta["🧠 IA Analiza Pregunta"]
+    AnalizarPregunta --> RespuestaContextual["💡 Respuesta Contextual"]
+    RespuestaContextual --> Dashboard
     
-    %% Asistente IA
-    S --> S1{Tipo de consulta}
-    S1 -->|💪| S2[Crear rutina personalizada]
-    S1 -->|💡| S3[Consejos entrenamiento]
-    S1 -->|🔥| S4[Motivación diaria]
-    S1 -->|🥗| S5[Consejos nutricionales]
-    S2 --> S6[🤖 Respuesta IA contextual]
-    S3 --> S6
-    S4 --> S6
-    S5 --> S6
+    FitBotModule --> BotonEntrenador["👨‍💼 Ir a Chat Entrenador"]
+    BotonEntrenador --> TrainerChatModule
     
-    %% Plan Nutricional
-    T --> T1{Tipo de dieta}
-    T1 -->|🎯| T2[Plan Definición]
-    T1 -->|💪| T3[Plan Volumen/Masa muscular]
-    T1 -->|⚖️| T4[Plan Pérdida de peso]
-    T2 --> T5[🍽️ Menú diario con calorías]
-    T3 --> T5
-    T4 --> T5
+    %% MI PROGRESO
+    ProgressModule --> MetricasCorporales["📈 Métricas Corporales"]
+    MetricasCorporales --> BarrasPeso["⚖️ Peso<br/>Barra Verde 75%"]
+    MetricasCorporales --> BarrasFuerza["💪 Fuerza<br/>Barra Verde 85%"]
+    MetricasCorporales --> BarrasIMC["📏 IMC<br/>Barra Verde 70%"]
     
-    %% Funcionalidades en tiempo real
-    J --> J1[🔄 Actualización automática cada 10s]
-    J1 --> J2{Estado del gimnasio}
-    J2 -->|<50%| J3[🟢 Normal]
-    J2 -->|50-80%| J4[🟡 Ocupado]
-    J2 -->|>80%| J5[🔴 Muy ocupado]
+    ProgressModule --> LogrosMedallas["🏆 Logros y Medallas"]
+    LogrosMedallas --> BarraLogros["🎯 Metas Completadas<br/>Barra Morada 80%"]
+    LogrosMedallas --> GridMedallas["🥇🥈🥉 Grid de Medallas"]
+    GridMedallas --> MedallaOro["🥇 30 Días Consecutivos"]
+    GridMedallas --> MedallaPlata["🥈 Pérdida de Peso"]
+    GridMedallas --> MedallaBronce["🥉 Primera Semana"]
+    GridMedallas --> TrofeoExtra["🏆⭐💎 Extras"]
     
-    %% Cerrar sesión
-    U --> U1[🔓 Logout]
-    U1 --> A
-
-    %% Estilos
-    classDef loginClass fill:#667eea,stroke:#333,stroke-width:2px,color:#fff
-    classDef mainClass fill:#4caf50,stroke:#333,stroke-width:2px,color:#fff
-    classDef featureClass fill:#ff9800,stroke:#333,stroke-width:2px,color:#fff
-    classDef aiClass fill:#9c27b0,stroke:#333,stroke-width:2px,color:#fff
-    classDef errorClass fill:#f44336,stroke:#333,stroke-width:2px,color:#fff
-    classDef successClass fill:#2196f3,stroke:#333,stroke-width:2px,color:#fff
-
-    %% Aplicación de clases
-    class A,C,D,E loginClass
-    class I,V,W,X,Y,Z mainClass
-    class O,P,Q,R,T featureClass
-    class P1,P2,P3,P4,P5,P6 featureClass
-    class Q1,Q2,Q3,Q4 featureClass
-    class R1,R2,R3,R4 featureClass
-    class T1,T2,T3,T4,T5 featureClass
-    class S,S1,S2,S3,S4,S5,S6 aiClass
-    class G,U1 errorClass
-    class H,P3,P5 successClass
+    ProgressModule --> HistorialEntrenos["📅 Historial Entrenamientos"]
+    HistorialEntrenos --> Dashboard
+    
+    %% RESERVAS
+    BookingModule --> TipoReserva{"Tipo de<br/>Reserva?"}
+    TipoReserva -->|Clases| ClasesGrupales["🧘‍♀️💃🚴‍♂️ Clases Grupales"]
+    TipoReserva -->|Máquinas| MaquinasDisp["🏃‍♂️🚴‍♀️ Máquinas Disponibles"]
+    
+    ClasesGrupales --> YogaFlow["🧘‍♀️ Yoga Flow<br/>Hoy 18:00<br/>🟢 8 cupos"]
+    ClasesGrupales --> Zumba["💃 Zumba Fitness<br/>Mañana 19:30<br/>🟡 2 cupos"]
+    ClasesGrupales --> Spinning["🚴‍♂️ Spinning Intensivo<br/>Miércoles 17:00<br/>🔴 Lista espera"]
+    
+    YogaFlow --> ClickReservar1["✅ Click Reservar"]
+    Zumba --> ClickReservar1
+    Spinning --> ClickReservar1
+    
+    MaquinasDisp --> Cinta["🏃‍♂️ Cinta #3<br/>🟢 Libre 45 min"]
+    MaquinasDisp --> Bici["🚴‍♀️ Bici #7<br/>🟡 Disponible 15 min"]
+    
+    Cinta --> ClickReservar2["✅ Click Reservar"]
+    Bici --> ClickReservar2
+    
+    ClickReservar1 --> ValidarDisponibilidad{Disponible?}
+    ClickReservar2 --> ValidarDisponibilidad
+    
+    ValidarDisponibilidad -->|Sí| ConfirmarReserva["✅ Reservado ✓<br/>Confirmación Temporal"]
+    ValidarDisponibilidad -->|No| ListaEspera["⏳ Añadir Lista Espera"]
+    ConfirmarReserva --> ActualizarEstado["🔄 Actualizar Estado UI"]
+    ListaEspera --> ActualizarEstado
+    ActualizarEstado --> Dashboard
+    
+    %% CHAT ENTRENADOR
+    TrainerChatModule --> ChatPersonal["💬 Chat Personal Miguel<br/>Header Amarillo"]
+    ChatPersonal --> MensajesExistentes["📜 Historial Mensajes"]
+    ChatPersonal --> InputChat["⌨️ Input Mensaje"]
+    
+    InputChat --> TipoMensaje{Tipo?}
+    TipoMensaje -->|Texto| EnviarTexto["📩 Enviar Texto"]
+    TipoMensaje -->|Foto| EnviarFoto["📷 Enviar Foto"]
+    TipoMensaje -->|Audio| EnviarAudio["🎤 Enviar Audio"]
+    
+    EnviarTexto --> MostrarEnviado["✓ Mostrar Mensaje Enviado"]
+    EnviarFoto --> MostrarEnviado
+    EnviarAudio --> MostrarEnviado
+    
+    MostrarEnviado --> EsperarRespuesta["⏱️ Esperar 1.5-3s"]
+    EsperarRespuesta --> RespuestaEntrenador["👨‍💼 Respuesta Automática Miguel<br/>Mensajes Personalizados"]
+    RespuestaEntrenador --> MostrarRespuesta["💬 Mostrar en Chat"]
+    MostrarRespuesta --> Dashboard
+    
+    %% NUTRICIÓN
+    NutritionModule --> PlanesNutricionales["📋 Planes Nutricionales"]
+    PlanesNutricionales --> PlanDef["🔥 Definición<br/>1,800 cal | 120g proteína"]
+    PlanesNutricionales --> PlanMasa["💪 Ganancia Muscular<br/>2,400 cal | 150g proteína"]
+    PlanesNutricionales --> PlanPerdida["⚖️ Pérdida Peso<br/>1,500 cal | 100g proteína"]
+    
+    PlanDef --> SeleccionarPlan["✅ Plan Seleccionado<br/>Borde Verde"]
+    PlanMasa --> SeleccionarPlan
+    PlanPerdida --> SeleccionarPlan
+    
+    NutritionModule --> RegistroAgua["💧 Registro Agua<br/>8 Vasos Interactivos"]
+    RegistroAgua --> ClickVaso["👆 Click en Vaso"]
+    ClickVaso --> ToggleEstado["🔄 Toggle Lleno/Vacío"]
+    ToggleEstado --> ActualizarContador["🔢 Actualizar Contador<br/>X/8 vasos"]
+    ActualizarContador --> Dashboard
+    
+    NutritionModule --> RegistroComidas["🍽️ Registro de Comidas"]
+    RegistroComidas --> DesayunoLog["🥞 Desayuno - 450 cal"]
+    RegistroComidas --> AlmuerzoLog["🥗 Almuerzo - 520 cal"]
+    RegistroComidas --> CenaLog["🍽️ Cena - 880 cal"]
+    RegistroComidas --> ContadorTotal["📊 Total: 1,850/2,400 cal"]
+    ContadorTotal --> Dashboard
+    
+    %% PERFIL
+    ProfileModule --> InfoPersonal["👤 Info Personal<br/>Carlos Mendoza"]
+    InfoPersonal --> Estadisticas["📊 Estadísticas"]
+    Estadisticas --> NumEntrenos["💪 127 Entrenamientos"]
+    Estadisticas --> NumMedallas["🏆 15 Medallas"]
+    Estadisticas --> PesoActual["⚖️ 78kg Peso"]
+    
+    ProfileModule --> Dispositivos["⌚ Dispositivos Conectados"]
+    Dispositivos --> AppleWatch["⌚ Apple Watch<br/>🟢 Conectado"]
+    Dispositivos --> MiBand["📱 Mi Band 7<br/>⚫ Desconectado"]
+    
+    ProfileModule --> OpcionesPerfil["⚙️ Opciones"]
+    OpcionesPerfil --> Config["⚙️ Configuración"]
+    OpcionesPerfil --> Notificaciones["🔔 Notificaciones"]
+    OpcionesPerfil --> Objetivos["🎯 Mis Objetivos"]
+    OpcionesPerfil --> EstadisticasCompletas["📊 Estadísticas Completas"]
+    
+    Config --> Dashboard
+    Notificaciones --> Dashboard
+    Objetivos --> Dashboard
+    EstadisticasCompletas --> Dashboard
+    
+    %% FUNCIONALIDADES GLOBALES
+    Dashboard -.-> ToggleTheme["🌙☀️ Toggle Tema"]
+    ToggleTheme --> AplicarDark{Modo<br/>Oscuro?}
+    AplicarDark -->|Sí| ModoDark["🌙 Aplicar Dark Mode<br/>Todos los Elementos"]
+    AplicarDark -->|No| ModoLight["☀️ Aplicar Light Mode<br/>Todos los Elementos"]
+    ModoDark --> Dashboard
+    ModoLight --> Dashboard
+    
+    Dashboard -.-> AforoTiempoReal["🏋️ Aforo en Tiempo Real"]
+    AforoTiempoReal --> MostrarAforo["📊 Mostrar 25/40 personas"]
+    MostrarAforo --> ColorIndicador{Nivel?}
+    ColorIndicador -->|0-50%| Verde["🟢 Verde - Capacidad Baja"]
+    ColorIndicador -->|50-80%| Amarillo["🟡 Amarillo - Moderado"]
+    ColorIndicador -->|80-100%| Rojo["🔴 Rojo - Capacidad Alta"]
+    Verde --> Dashboard
+    Amarillo --> Dashboard
+    Rojo --> Dashboard
+    
+    %% ESTILOS
+    classDef startClass fill:#FF6B6B,stroke:#fff,stroke-width:4px,color:#fff,font-weight:bold
+    classDef authClass fill:#4ECDC4,stroke:#fff,stroke-width:3px,color:#fff
+    classDef dashClass fill:#45B7D1,stroke:#fff,stroke-width:4px,color:#fff,font-weight:bold
+    classDef moduleClass fill:#96CEB4,stroke:#fff,stroke-width:3px,color:#fff,font-weight:bold
+    classDef submoduleClass fill:#FFEAA7,stroke:#333,stroke-width:2px,color:#333
+    classDef actionClass fill:#FFB347,stroke:#fff,stroke-width:2px,color:#fff
+    classDef decisionClass fill:#DDA0DD,stroke:#fff,stroke-width:3px,color:#fff
+    classDef successClass fill:#98D8C8,stroke:#fff,stroke-width:2px,color:#fff
+    classDef errorClass fill:#F08080,stroke:#fff,stroke-width:2px,color:#fff
+    classDef featureClass fill:#E8DAEF,stroke:#fff,stroke-width:2px,color:#333
+    
+    class Start,Splash startClass
+    class Login,SocialLogin,ValidarGoogle,ValidarFB,ValidarEmail authClass
+    class Dashboard dashClass
+    class FitBotModule,ProgressModule,BookingModule,TrainerChatModule,NutritionModule,ProfileModule moduleClass
+    class FitBotChat,MetricasCorporales,LogrosMedallas,ClasesGrupales,MaquinasDisp,ChatPersonal,PlanesNutricionales,RegistroAgua,RegistroComidas,InfoPersonal,Dispositivos submoduleClass
+    class BotonesRapidos,GenerarRutina,MostrarRutina,InputTexto,ClickReservar1,ClickReservar2,InputChat,EnviarTexto,EnviarFoto,EnviarAudio,ClickVaso,ToggleEstado actionClass
+    class CheckAuth,AuthSuccess,TipoReserva,ValidarDisponibilidad,TipoMensaje,AplicarDark,ColorIndicador decisionClass
+    class ConfirmarReserva,ActualizarEstado,SeleccionarPlan,ModoDark,ModoLight,Verde,Amarillo successClass
+    class MostrarError,ListaEspera,Rojo errorClass
+    class OpcionCardio,OpcionFuerza,OpcionFlex,OpcionHIIT,OpcionMenu,EjecutarRutina,BarrasPeso,BarrasFuerza,BarrasIMC,BarraLogros,GridMedallas,YogaFlow,Zumba,Spinning,Cinta,Bici,RespuestaEntrenador,PlanDef,PlanMasa,PlanPerdida,Config,ToggleTheme,AforoTiempoReal featureClass
 ```
 
 
