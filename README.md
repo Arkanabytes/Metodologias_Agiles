@@ -305,15 +305,83 @@ graph TB
 
 
 ```mermaid
-Semana | Tareas
-1-2    | Diseño Mockup y UI
-2-3    | Desarrollo Dashboard
-3-4    | Implementación FitBot AI
-4-5    | Chat con Entrenador
-5-6    | Sistema de Reservas
-6-7    | Registro Progreso y Nutrición
-7-8    | Gamificación y Medallas
-8-9    | Pruebas y Validación
+flowchart TD
+    Inicio([Inicio App])
+    Login[/Login: Email + Social/]
+    Dashboard[/Dashboard Principal/]
+    Progreso[Mi Progreso]
+    Reservas[Sistema de Reservas]
+    FitBot[FitBot AI]
+    ChatEntr[Chat Entrenador]
+    Nutricion[Nutrición y Registro]
+    Perfil[Perfil Usuario]
+
+    Inicio --> Login --> Dashboard
+    Dashboard --> Progreso
+    Dashboard --> Reservas
+    Dashboard --> FitBot
+    Dashboard --> ChatEntr
+    Dashboard --> Nutricion
+    Dashboard --> Perfil
+
+```
+
+
+```mermaid
+flowchart TD
+    Inicio([Inicio App 🔴])
+    Login[/Login: Email + Google + Facebook 🟢/]
+    Dashboard[/Dashboard Principal 🔵/]
+
+    %% Módulos principales
+    Progreso[Mi Progreso 🟡]
+    Historial[Historial y Metas Alcanzadas]
+    Medallas[Logros y Medallas]
+    
+    Reservas[Sistema de Reservas 🟣]
+    Clases[Clases Grupales]
+    Maquinas[Máquinas Fitness]
+    ListaEspera[Lista de Espera Automática]
+
+    FitBot[FitBot AI 🌿]
+    ChatBotOpciones[Opciones: Cardio, Fuerza, Flexibilidad, HIIT, Menú]
+    Rutinas[Rutinas Personalizadas]
+    
+    ChatEntr[Chat Entrenador 🟠]
+    Mensajes[Mensajes, Fotos, Audio]
+
+    Nutricion[Nutrición 🌊]
+    Planes[Planes: Definición, Masa Muscular, Pérdida de Peso]
+    Agua[Registro de Agua]
+    Comidas[Registro de Comidas]
+
+    Perfil[Perfil Usuario ✨]
+    Stats[Estadísticas y Wearables]
+    Config[Configuración]
+
+    Aforo[Aforo en Tiempo Real 🌸]
+
+    %% Conexiones
+    Inicio --> Login --> Dashboard
+    Dashboard --> Progreso
+    Progreso --> Historial
+    Progreso --> Medallas
+    Dashboard --> Reservas
+    Reservas --> Clases
+    Reservas --> Maquinas
+    Maquinas --> ListaEspera
+    Dashboard --> FitBot
+    FitBot --> ChatBotOpciones --> Rutinas
+    Dashboard --> ChatEntr
+    ChatEntr --> Mensajes
+    Dashboard --> Nutricion
+    Nutricion --> Planes
+    Nutricion --> Agua
+    Nutricion --> Comidas
+    Dashboard --> Perfil
+    Perfil --> Stats
+    Perfil --> Config
+    Dashboard --> Aforo
 
 
 ```
