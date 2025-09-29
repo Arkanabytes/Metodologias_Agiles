@@ -302,3 +302,18 @@ graph TB
     class RutinaCardio,RutinaFuerza,RutinaFlex,RutinaHIIT,ConfirmarReserva,RespuestaEntrenador,PlanDef,PlanMasa,PlanPerdida,ModoOscuro,AforoReal featureStyle
 
 ```
+
+
+```mermaid
+Semana | Tareas
+1-2    | Diseño Mockup y UI
+2-3    | Desarrollo Dashboard
+3-4    | Implementación FitBot AI
+4-5    | Chat con Entrenador
+5-6    | Sistema de Reservas
+6-7    | Registro Progreso y Nutrición
+7-8    | Gamificación y Medallas
+8-9    | Pruebas y Validación
+
+
+```
