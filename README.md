@@ -216,7 +216,7 @@ graph TB
 ```
 
 
-# 🏋️‍♂️ Diagrama de Flujo - App de Gimnasio
+# 🏋️‍♂️ Diagrama de Flujo Basico - App de Gimnasio
 
 
 ```mermaid
@@ -302,6 +302,3 @@ graph TB
     class RutinaCardio,RutinaFuerza,RutinaFlex,RutinaHIIT,ConfirmarReserva,RespuestaEntrenador,PlanDef,PlanMasa,PlanPerdida,ModoOscuro,AforoReal featureStyle
 
 ```
-
-# Metodologias_Agiles
-Proyecto que ayuda a ver como funciona la metodologia Scrum, con un proyecto simulador
