@@ -119,6 +119,89 @@ flowchart TD
 ```
 
 
+```mermaid
+graph TB
+    Start["🚀 Iniciar FitPro"] --> Login["🔐 Pantalla Login"]
+    
+    Login --> Auth{Autenticación}
+    Auth -->|Email/Password| Dashboard
+    Auth -->|Google| Dashboard
+    Auth -->|Facebook| Dashboard
+    Auth -->|Error| Login
+    
+    Dashboard["🏠 Dashboard Central"]
+    
+    Dashboard --> ModuloIA["🤖 FitBot IA"]
+    Dashboard --> ModuloProgreso["📊 Mi Progreso"]
+    Dashboard --> ModuloReservas["📅 Reservas"]
+    Dashboard --> ModuloChat["👨‍💼 Chat Entrenador"]
+    Dashboard --> ModuloNutricion["🥗 Nutrición"]
+    Dashboard --> ModuloPerfil["👤 Perfil"]
+    
+    ModuloIA --> ChatIA["💬 Chat Interactivo"]
+    ChatIA --> PreguntaObjetivo{¿Objetivo?}
+    PreguntaObjetivo -->|Cardio| RutinaCardio["🏃‍♂️ Rutina Cardio"]
+    PreguntaObjetivo -->|Fuerza| RutinaFuerza["💪 Rutina Fuerza"]
+    PreguntaObjetivo -->|Flexibilidad| RutinaFlex["🧘‍♂️ Rutina Flex"]
+    PreguntaObjetivo -->|HIIT| RutinaHIIT["⚡ Rutina HIIT"]
+    
+    RutinaCardio --> Dashboard
+    RutinaFuerza --> Dashboard
+    RutinaFlex --> Dashboard
+    RutinaHIIT --> Dashboard
+    
+    ModuloProgreso --> VerMetricas["📈 Ver Métricas"]
+    VerMetricas --> VerLogros["🏆 Ver Logros"]
+    VerLogros --> Dashboard
+    
+    ModuloReservas --> TipoReserva{Tipo}
+    TipoReserva -->|Clase Grupal| ReservarClase["🧘‍♀️ Reservar Clase"]
+    TipoReserva -->|Máquina| ReservarMaquina["🏃‍♂️ Reservar Máquina"]
+    ReservarClase --> ConfirmarReserva["✅ Confirmar"]
+    ReservarMaquina --> ConfirmarReserva
+    ConfirmarReserva --> Dashboard
+    
+    ModuloChat --> ChatPersonal["💬 Chat con Miguel"]
+    ChatPersonal --> EnviarMensaje{Acción}
+    EnviarMensaje -->|Texto| RespuestaEntrenador["📩 Respuesta"]
+    EnviarMensaje -->|Foto| RespuestaEntrenador
+    EnviarMensaje -->|Audio| RespuestaEntrenador
+    RespuestaEntrenador --> Dashboard
+    
+    ModuloNutricion --> SeleccionarPlan{Plan}
+    SeleccionarPlan -->|Definición| PlanDef["🔥 Plan Def"]
+    SeleccionarPlan -->|Masa Muscular| PlanMasa["💪 Plan Masa"]
+    SeleccionarPlan -->|Pérdida Peso| PlanPerdida["⚖️ Plan Pérdida"]
+    PlanDef --> RegistrarAgua["💧 Agua"]
+    PlanMasa --> RegistrarAgua
+    PlanPerdida --> RegistrarAgua
+    RegistrarAgua --> RegistrarComidas["🍽️ Comidas"]
+    RegistrarComidas --> Dashboard
+    
+    ModuloPerfil --> VerEstadisticas["📊 Estadísticas"]
+    VerEstadisticas --> Configuracion["⚙️ Config"]
+    Configuracion --> Dashboard
+    
+    Dashboard -.-> ModoOscuro["🌙 Modo Día/Noche"]
+    Dashboard -.-> AforoReal["🏋️ Aforo Tiempo Real"]
+    
+    classDef startStyle fill:#FF6B6B,stroke:#fff,stroke-width:4px,color:#fff,font-weight:bold
+    classDef authStyle fill:#4ECDC4,stroke:#fff,stroke-width:3px,color:#fff,font-weight:bold
+    classDef dashStyle fill:#45B7D1,stroke:#fff,stroke-width:4px,color:#fff,font-weight:bold
+    classDef moduleStyle fill:#96CEB4,stroke:#fff,stroke-width:3px,color:#fff
+    classDef actionStyle fill:#FFEAA7,stroke:#fff,stroke-width:2px,color:#333
+    classDef decisionStyle fill:#DDA0DD,stroke:#fff,stroke-width:3px,color:#fff
+    classDef featureStyle fill:#E8DAEF,stroke:#fff,stroke-width:2px,color:#333
+    
+    class Start startStyle
+    class Login,Auth authStyle
+    class Dashboard dashStyle
+    class ModuloIA,ModuloProgreso,ModuloReservas,ModuloChat,ModuloNutricion,ModuloPerfil moduleStyle
+    class ChatIA,VerMetricas,VerLogros,ReservarClase,ReservarMaquina,ChatPersonal,RegistrarAgua,RegistrarComidas,VerEstadisticas,Configuracion actionStyle
+    class PreguntaObjetivo,TipoReserva,EnviarMensaje,SeleccionarPlan decisionStyle
+    class RutinaCardio,RutinaFuerza,RutinaFlex,RutinaHIIT,ConfirmarReserva,RespuestaEntrenador,PlanDef,PlanMasa,PlanPerdida,ModoOscuro,AforoReal featureStyle
+
+```
 
 # Metodologias_Agiles
 Proyecto que ayuda a ver como funciona la metodologia Scrum, con un proyecto simulador
